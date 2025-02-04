@@ -48,14 +48,14 @@ export const App: React.FC = () => {
     setIsSubmitting(true);
 
     const deletePromises = completedTodos.map(todo =>
-      todoService.deleteTodos(todo.id).then(
-        () => todo.id,
-        () => {
-          setErrorMessage('Unable to delete a todo');
+      todoService
+        .deleteTodos(todo.id)
+        .then(() => todo.id)
+        .catch(() => {
+          setErrorMessage(prev => prev || 'Unable to delete a todo');
 
           return null;
-        },
-      ),
+        }),
     );
 
     Promise.allSettled(deletePromises).then(results => {

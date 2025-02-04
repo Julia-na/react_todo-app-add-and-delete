@@ -21,8 +21,6 @@ export const Footer: React.FC<Props> = ({
   handleClearCompleted,
   completedTasks,
 }) => {
-  const isClearButtonEnabled = todos.some(todo => todo.completed);
-
   return (
     <>
       {todos.length > 0 && (
@@ -52,11 +50,10 @@ export const Footer: React.FC<Props> = ({
           <button
             type="button"
             className="todoapp__clear-completed"
-            disabled={!isClearButtonEnabled}
+            disabled={completedTasks.length === 0}
             data-cy="ClearCompletedButton"
-            onClick={handleClearCompleted}
-            style={{
-              display: completedTasks.length > 0 ? 'block' : 'none',
+            onClick={() => {
+              handleClearCompleted();
             }}
           >
             Clear completed
