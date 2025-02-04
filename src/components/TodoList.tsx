@@ -5,7 +5,6 @@ import { TodoItem } from './TodoItem';
 type Props = {
   loadingTodoId: number | null;
   preparedTodos: Todo[] | null;
-  loading: boolean;
   errorMessage: string | null;
   handleToggleChange: (todo: Todo) => void;
   deleteTodoFromBase: (todoId: number) => void;
@@ -14,7 +13,6 @@ type Props = {
 export const TodoList: React.FC<Props> = ({
   loadingTodoId,
   preparedTodos,
-  loading,
   errorMessage,
   handleToggleChange,
   deleteTodoFromBase,
@@ -29,7 +27,6 @@ export const TodoList: React.FC<Props> = ({
             loadingTodoId={loadingTodoId}
             spinnerLoading={loadingTodoId === todo.id}
             todo={todo}
-            loading={loading}
             errorMessage={errorMessage}
             handleToggleChange={handleToggleChange}
             deleteTodoFromBase={deleteTodoFromBase}

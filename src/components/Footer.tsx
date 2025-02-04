@@ -9,7 +9,7 @@ type Props = {
   todoCount: number;
   setFilterBy: React.Dispatch<React.SetStateAction<Filter>>;
   filterBy: string;
-  handleClearCompleted: (completed: Todo[]) => void;
+  handleClearCompleted: () => void;
   completedTasks: Todo[];
 };
 
@@ -54,12 +54,9 @@ export const Footer: React.FC<Props> = ({
             className="todoapp__clear-completed"
             disabled={!isClearButtonEnabled}
             data-cy="ClearCompletedButton"
-            onClick={() => {
-              handleClearCompleted(completedTasks);
-            }}
+            onClick={handleClearCompleted}
             style={{
-              visibility: completedTasks.length > 0 ? 'visible' : 'hidden',
-              position: 'relative',
+              display: completedTasks.length > 0 ? 'block' : 'none',
             }}
           >
             Clear completed

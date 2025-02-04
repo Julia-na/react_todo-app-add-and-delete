@@ -19,10 +19,8 @@ export const App: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [filterBy, setFilterBy] = useState(Filter.All);
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [titleInput, setTitleInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [hidden, setHidden] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadingTodoId, setLoadingTodoId] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -51,11 +49,11 @@ export const App: React.FC = () => {
 
     const deletePromises = completedTodos.map(todo =>
       todoService.deleteTodos(todo.id).then(
-        () => todo.id, // Успешное удаление, возвращаем ID
+        () => todo.id,
         () => {
           setErrorMessage('Unable to delete a todo');
 
-          return null; // Ошибка, возвращаем null
+          return null;
         },
       ),
     );
@@ -79,23 +77,19 @@ export const App: React.FC = () => {
   const preparedTodos = getPreparedTodos(todos, filterBy);
 
   function loadTodos() {
-    setLoading(true);
     setErrorMessage(null);
     setIsSubmitting(true);
-    setHidden(true);
 
     todoService
       .getTodos()
       .then(setTodos)
-      .then(() => setIsSubmitting(false))
-      .catch(() => setErrorMessage('Unable to load todos'))
-      .then(() => setHidden(false))
-      .then(() => {
+      .catch(() => {
+        setErrorMessage('Unable to load todos');
         setTimeout(() => {
           setErrorMessage(null);
         }, 3000);
       })
-      .finally(() => setLoading(false));
+      .finally(() => setIsSubmitting(false));
   }
 
   useEffect(loadTodos, []);
@@ -114,13 +108,11 @@ export const App: React.FC = () => {
       })
       .catch(() => {
         setErrorMessage('Unable to delete a todo');
+        setTimeout(() => setErrorMessage(null), 3000);
       })
       .finally(() => {
-        setLoadingTodoId(null);
+        setLoadingTodoId(prevId => (prevId === todoId ? null : prevId));
         setIsSubmitting(false);
-        setTimeout(() => {
-          setErrorMessage(null);
-        }, 3000);
       });
   };
 
@@ -131,7 +123,6 @@ export const App: React.FC = () => {
   function addTodoToBase({ userId, title, completed }: Todo) {
     setErrorMessage(null);
     setIsSubmitting(true);
-    setLoading(true);
 
     const tempId = Math.random() * 100000;
     const newTempTodo: Todo = { id: tempId, userId, title, completed };
@@ -143,14 +134,14 @@ export const App: React.FC = () => {
       .then(newTodo => {
         setTodos(currentTodos => [...currentTodos, newTodo]);
         setTempTodo(null);
-        setLoading(false);
         setLoadingTodoId(null);
       })
       .catch(error => {
         setErrorMessage('Unable to add a todo');
         setTimeout(() => setErrorMessage(null), 3000);
         setTempTodo(null);
-        throw error;
+
+        return Promise.reject(error);
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -198,7 +189,6 @@ export const App: React.FC = () => {
 
   function updateTodo(updatedTodo: Todo) {
     setErrorMessage(null);
-    setLoading(true);
     setLoadingTodoId(updatedTodo.id);
 
     return todoService
@@ -215,7 +205,6 @@ export const App: React.FC = () => {
           return newTodos;
         });
         setLoadingTodoId(null);
-        setLoading(false);
       })
       .catch(error => {
         setErrorMessage(`Can't update a post`);
@@ -239,7 +228,6 @@ export const App: React.FC = () => {
         <header className="todoapp__header">
           <TodoForm
             todos={todos}
-            loading={loading}
             allTodosCompleted={allTodosCompleted}
             handleSubmit={handleSubmit}
             inputRef={inputRef}
@@ -251,7 +239,6 @@ export const App: React.FC = () => {
         </header>
 
         <TodoList
-          loading={loading}
           loadingTodoId={loadingTodoId}
           preparedTodos={preparedTodos}
           errorMessage={errorMessage}
@@ -292,12 +279,7 @@ export const App: React.FC = () => {
                 ×
               </button>
 
-              <div
-                data-cy="TodoLoader"
-                className={classNames('modal overlay', {
-                  'is-active': loading,
-                })}
-              >
+              <div data-cy="TodoLoader" className="modal overlay is-active">
                 <div
                   className="
                             modal-background
@@ -324,10 +306,8 @@ export const App: React.FC = () => {
 
       <Notification
         message={errorMessage}
-        hidden={hidden}
         onClose={() => {
           setErrorMessage(null);
-          setHidden(true);
         }}
       />
     </div>

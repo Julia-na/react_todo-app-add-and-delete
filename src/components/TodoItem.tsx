@@ -6,7 +6,6 @@ type Props = {
   loadingTodoId: number | null;
   spinnerLoading: boolean;
   todo: Todo;
-  loading: boolean;
   errorMessage: string | null;
   handleToggleChange: (todo: Todo) => void;
   deleteTodoFromBase: (todoId: number) => void;

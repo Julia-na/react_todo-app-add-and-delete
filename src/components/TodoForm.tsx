@@ -4,7 +4,6 @@ import { Todo } from '../types/Todo';
 
 type Props = {
   todos: Todo[];
-  loading: boolean;
   allTodosCompleted: boolean;
   handleSubmit: (event: React.FormEvent) => void;
   titleInput: string;
@@ -16,7 +15,6 @@ type Props = {
 
 export const TodoForm: React.FC<Props> = ({
   todos,
-  // loading,
   allTodosCompleted,
   handleSubmit,
   inputRef,

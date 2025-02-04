@@ -4,7 +4,6 @@ import classNames from 'classnames';
 type Props = {
   message: string | null;
   onClose: () => void;
-  hidden: boolean;
 };
 
 export const Notification: React.FC<Props> = ({ onClose, message }) => {
